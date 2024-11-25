@@ -144,28 +144,28 @@ for cluster_id in range(len(np.unique(predicted_inbuild))):
         labels_inbuild[mask] = np.argmax(np.bincount(y_test[mask]))
 
 # Plot real labels
-fig_real, axes_real = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))  # Adjusted figure and subplot size
-fig_real.suptitle("Real Labels", fontsize=16)  # Title for the figure
+fig_real, axes_real = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))
+fig_real.suptitle("Real Labels", fontsize=16)
 axes_real = axes_real.ravel()
 for ax, image, label in zip(axes_real, digits.images[n_samples // 2:], y_test):
     ax.set_axis_off()
     ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
-    ax.set_title(f"Label: {label}", fontsize=8)  # Smaller font for titles
-plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to leave space for suptitle
+    ax.set_title(f"Label: {label}", fontsize=8)
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Plot predicted labels for CustomDBSCAN
-fig_custom, axes_custom = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))  # Adjusted figure and subplot size
-fig_custom.suptitle("Predicted Labels - CustomDBSCAN", fontsize=16)  # Title for the figure
+fig_custom, axes_custom = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))
+fig_custom.suptitle("Predicted Labels - CustomDBSCAN", fontsize=16)
 axes_custom = axes_custom.ravel()
 for ax, image, label in zip(axes_custom, digits.images[n_samples // 2:], labels_custom):
     ax.set_axis_off()
     ax.imshow(image, cmap=plt.cm.gray_r, interpolation="nearest")
-    ax.set_title(f"Pred: {label}", fontsize=8)  # Smaller font for titles
+    ax.set_title(f"Pred: {label}", fontsize=8)
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Plot predicted labels for DBSCAN
-fig_inbuild, axes_inbuild = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))  # Adjusted figure and subplot size
-fig_inbuild.suptitle("Predicted Labels - DBSCAN", fontsize=16)  # Title for the figure
+fig_inbuild, axes_inbuild = plt.subplots(nrows=5, ncols=10, figsize=(12, 6))
+fig_inbuild.suptitle("Predicted Labels - DBSCAN", fontsize=16)
 axes_inbuild = axes_inbuild.ravel()
 for ax, image, label in zip(axes_inbuild, digits.images[n_samples // 2:], labels_inbuild):
     ax.set_axis_off()
@@ -174,16 +174,16 @@ for ax, image, label in zip(axes_inbuild, digits.images[n_samples // 2:], labels
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Plot confusion matrices for CustomDBSCAN
-fig_cm_custom, ax_cm_custom = plt.subplots(figsize=(6, 6))  # Adjusted figure size
-fig_cm_custom.suptitle("Confusion Matrix - CustomDBSCAN", fontsize=14)  # Title for the figure
-metrics.ConfusionMatrixDisplay.from_predictions(y_test, labels_custom, ax=ax_cm_custom)  # Use custom axis
-plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to leave space for suptitle
+fig_cm_custom, ax_cm_custom = plt.subplots(figsize=(6, 6))
+fig_cm_custom.suptitle("Confusion Matrix - CustomDBSCAN", fontsize=14)
+metrics.ConfusionMatrixDisplay.from_predictions(y_test, labels_custom, ax=ax_cm_custom)
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Plot confusion matrices for DBSCAN
-fig_cm_inbuild, ax_cm_inbuild = plt.subplots(figsize=(6, 6))  # Adjusted figure size
-fig_cm_inbuild.suptitle("Confusion Matrix - DBSCAN", fontsize=14)  # Title for the figure
-metrics.ConfusionMatrixDisplay.from_predictions(y_test, labels_inbuild, ax=ax_cm_inbuild)  # Use custom axis
-plt.tight_layout(rect=[0, 0, 1, 0.95])  # Adjust layout to leave space for suptitle
+fig_cm_inbuild, ax_cm_inbuild = plt.subplots(figsize=(6, 6))
+fig_cm_inbuild.suptitle("Confusion Matrix - DBSCAN", fontsize=14)
+metrics.ConfusionMatrixDisplay.from_predictions(y_test, labels_inbuild, ax=ax_cm_inbuild)
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Show all figures
 plt.show()
