@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN as SklearnDBSCAN
-
+from collections import deque
 
 class CustomDBSCAN:
     def __init__(self, eps=0.5, min_samples=5):
@@ -75,6 +75,11 @@ class CustomDBSCAN:
         plt.legend()
         plt.grid()
         plt.pause(0.1)  # Pause for visualization
+    def fit_predict(self, X):
+        self.fit(self, X)
+        return self.labels
+
+
 
 # Generate data points for a smiling face
 def create_smiling_face_data():
@@ -92,15 +97,8 @@ def create_smiling_face_data():
     # Combine all parts
     data = np.vstack([left_eye, right_eye, smile])
     return data
-
-
-# Plotting the generated data
 data = create_smiling_face_data()
-plt.scatter(data[:, 0], data[:, 1], s=10, color='blue')
-plt.title("Generated Smiling Face Data")
-plt.xlabel("X-axis")
-plt.ylabel("Y-axis")
-plt.show()
+
 
 # Apply Sklearn's DBSCAN to the data
 sklearn_dbscan = SklearnDBSCAN(eps=0.2, min_samples=6, algorithm = 'kd_tree' )
@@ -110,15 +108,14 @@ sklearn_labels = sklearn_dbscan.fit_predict(data)
 custom_dbscan = CustomDBSCAN(eps=0.2, min_samples=7)
 custom_dbscan.fit(data)
 
-
-
 # Plot results of  DBSCAN
 plt.figure(figsize=(14, 7))
+
 # Sklearn DBSCAN results
+
 plt.subplot(1, 2, 1)
 unique_labels_sklearn = set(sklearn_labels)
 colors_sklearn = plt.cm.get_cmap('tab10', len(unique_labels_sklearn))
-
 for label in unique_labels_sklearn:
     if label == -1:
         color = 'black'  # Black for noise
@@ -129,16 +126,17 @@ for label in unique_labels_sklearn:
 
     plt.scatter(data[sklearn_labels == label][:, 0], data[sklearn_labels == label][:, 1],
                 color=color, label=label_name, alpha=0.8, s=20)
-
 plt.title("Sklearn DBSCAN Clustering Results")
 plt.xlabel("X-axis")
 plt.ylabel("Y-axis")
 plt.legend()
+
+
 # Custom DBSCAN results
+
 plt.subplot(1, 2, 2)
 unique_labels_custom = set(custom_dbscan.labels)
 colors_custom = plt.cm.get_cmap('tab10', len(unique_labels_custom))
-
 for label in unique_labels_custom:
     if label == -1:
         color = 'black'  # Black for noise
@@ -149,7 +147,6 @@ for label in unique_labels_custom:
 
     plt.scatter(data[custom_dbscan.labels == label][:, 0], data[custom_dbscan.labels == label][:, 1],
                 color=color, label=label_name, alpha=0.8, s=20)
-
 plt.title("Custom DBSCAN Clustering Results")
 plt.xlabel("X-axis")
 plt.ylabel("Y-axis")
