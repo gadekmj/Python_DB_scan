@@ -1,14 +1,15 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn import datasets, metrics
 from sklearn.cluster import DBSCAN
 from sklearn.model_selection import train_test_split
-import numpy as np
 
 class CustomDBSCAN:
     def __init__(self, eps=0.5, min_samples=5):
         self.eps = eps
         self.min_samples = min_samples
         self.labels = None
+
     def fit(self, X):
         n_samples = X.shape[0]
         self.labels = -np.ones(n_samples, dtype=int)  # Initialize labels to -1 (noise)
@@ -27,11 +28,13 @@ class CustomDBSCAN:
                 # Expand the cluster starting from this core point
                 self._expand_cluster(X, i, neighbors, cluster_id)
                 cluster_id += 1
+
     def _get_neighbors(self, X, point_idx):
         # Calculate distances between point_idx and all other points
         distances = np.linalg.norm(X - X[point_idx], axis=1)
         # Return indices of neighbors within eps distance
         return np.where(distances < self.eps)[0]
+
     def _expand_cluster(self, X, point_idx, neighbors, cluster_id):
         self.labels[point_idx] = cluster_id
         queue = list(neighbors)
@@ -48,35 +51,11 @@ class CustomDBSCAN:
                     # Add only new neighbors that haven't been assigned to any cluster
                     queue.extend([n for n in current_neighbors if self.labels[n] == -1])
 
-            # Visualize the clustering process (slowmo)
-            #self.visualize_clusters(X, cluster_id)
-    def visualize_clusters(self, X, current_cluster):
-        plt.clf()  # Clear the current figure
-        unique_labels = set(self.labels)
-        colors = plt.cm.get_cmap('tab20', len(unique_labels))
-
-        for label in unique_labels:
-            if label == -1:
-                color = 'black'  # Black for noise
-                label_name = 'Noise'
-            else:
-                color = colors(label)
-                label_name = f'Cluster {label}'
-
-            plt.scatter(X[self.labels == label][:, 0], X[self.labels == label][:, 1],
-                        color=color, label=label_name, alpha=0.8, edgecolor='k', s=50)
-
-        plt.title(f"Custom DBSCAN Clustering - Current Cluster: {current_cluster}")
-        plt.xlabel("Feature 1")
-        plt.ylabel("Feature 2")
-        plt.legend()
-        plt.grid()
-        plt.pause(0.1)  # Pause for visualization
     def fit_predict(self, X):
         self.fit(X)
         return self.labels
-def find_best_dbscan_params(X_test, y_test, eps_start, eps_end, eps_step, min_samples_range, use_custom=False):
 
+def find_best_dbscan_params(X_test, y_test, eps_start, eps_end, eps_step, min_samples_range, use_custom=False):
     best_eps = 0
     best_min_samples = 0
     best_score = 0
@@ -105,7 +84,6 @@ def find_best_dbscan_params(X_test, y_test, eps_start, eps_end, eps_step, min_sa
         "best_score": best_score,
     }
 
-
 # Load the digits dataset
 digits = datasets.load_digits()
 
@@ -117,17 +95,16 @@ data = digits.images.reshape((n_samples, -1))
 X_train, X_test, y_train, y_test = train_test_split(data, digits.target, test_size=0.5, shuffle=False)
 
 # Optimize DBSCAN parameters
-result = find_best_dbscan_params(X_test, y_test, 20.9, 21, 0.01, range(2,5), use_custom=True)
+result = find_best_dbscan_params(X_test, y_test, 20.9, 21, 0.01, range(2, 5), use_custom=True)
 best_eps = result["best_eps"]
 best_min_samples = result["best_min_samples"]
 
 # Create a DBSCAN clustering model with optimized parameters
 dbscan = CustomDBSCAN(eps=best_eps, min_samples=best_min_samples)
-dbscan_inbuild= DBSCAN(eps=best_eps, min_samples=best_min_samples)
+dbscan_inbuild = DBSCAN(eps=best_eps, min_samples=best_min_samples)
 # Fit the model and predict clusters on the test subset
 predicted = dbscan.fit_predict(X_test)
 predicted_inbuild = dbscan_inbuild.fit_predict(X_test)
-
 
 # Map the cluster labels to the true labels for CustomDBSCAN
 labels_custom = np.zeros_like(predicted)
@@ -187,4 +164,3 @@ plt.tight_layout(rect=[0, 0, 1, 0.95])
 
 # Show all figures
 plt.show()
-
